@@ -9,6 +9,11 @@ if (version_compare(PHP_VERSION, '5.3.7') < 0)
     );
 }
 
+// If we're already logged in, go back home
+if (isLoggedIn())
+{
+    redirectAndExit('index.php');
+}
 // Handle the form posting
 $username = "";
 if ($_POST)

@@ -28,21 +28,27 @@ if (!$row)
 $errors = null;
 if ($_POST)
 {
-    $commentData = array(
-        'name' => $_POST['comment-name'],
-        'website' => $_POST['comment-website'],
-        'text' => $_POST['comment-text'],
-    );
-    $errors = addCommentToPost(
-        $pdo,
-        $postId,
-        $commentData
-    );
-    // If there are no errors, redirect back to self and redisplay
-    if (!$errors)
+    switch ($_GET['action'])
     {
-        redirectAndExit('view-post.php?post_id=' . $postId);
+        /* filter by form action name defined in 
+         * (add )/tempaltes/comment-form.php and (delete)/templates/list-comments.php
+         * 
+         */
+        case 'add-comment':
+            $commentData = array(
+                'name' => $_POST['comment-name'],
+                'website' => $_POST['comment-website'],
+                'text' => $_POST['comment-text'],
+            );
+            $errors = handleAddComment($pdo, $postId, $commentData);
+            break;
+        case 'delete-comment':
+            $deleteResponse = $_POST['delete-comment'];
+            handleDeleteComment($pdo, $postId, $deleteResponse);
+            break;
+        $errors = handleAddComment($pdo, $postId, $commentData);
     }
+    
 }
 else
 {
@@ -65,8 +71,6 @@ else
     </head>
     <body>
         <?php require 'templates/title.php' ?>
-
-
         <div class="post">
             <h2>
                 <?php echo htmlEscape($row['title']) ?>
@@ -78,37 +82,8 @@ else
             <?php echo convertNewlinesToParagraphs($row['body']) ?>
         </div>
 
-
-        <div class="comment-list">
-             <h3><?php echo countCommentsForPost($pdo, $postId) ?> comments</h3>
-
-            <?php foreach (getCommentsForPost($pdo, $postId) as $comment): ?>
-                <div class="comment">
-                    <div class="comment-meta">
-                        Comment from
-                        <?php echo htmlEscape($comment['name']) ?>
-                        on
-                        <?php echo convertSqlDate($comment['created_at']) ?>
-                    </div>
-                    <div class="comment-body">
-                        <?php // This is already escaped ?>
-                        <?php echo convertNewlinesToParagraphs($comment['text']) ?>
-                    </div>
-                </div>
-            <?php endforeach ?>
-        </div
->        <h2>
-            <?php echo htmlEscape($row['title']) ?>
-        </h2>
-        <div>
-            <?php echo convertSqlDate($row['created_at']) ?>
-        </div>
-        <p>
-            <?php $bodyText = htmlEscape($row['body']) ?>
-            <?php echo convertToPara($bodyText) ?>
-        </p>
-
-
+        <?php require 'templates/list-comments.php'?>      
+        <?php // We use $commentData in this HTML fragment ?>
         <?php require 'templates/comment-form.php' ?>
     </body>
 </html>
