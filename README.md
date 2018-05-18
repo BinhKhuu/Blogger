@@ -18,9 +18,10 @@ I use xampp for the SQL and apache server
 ###### assuming Lampp setup
 1. clone the project to /opt/lampp/htdocs
 2. go to localhost/blogger/install.php
-  * click install 
-  * if a database already exist 
+ * click install 
+ * if a database already exist 
     * delete the data.sqlite file at:
-      * /opt/lampp/htdocs/blogger/data/data.sqlite
+    * /opt/lampp/htdocs/blogger/data/data.sqlite
+3. visit /localhost/blogger or /localhost/blogger/index.php
 
 *[Binh Khuu]
